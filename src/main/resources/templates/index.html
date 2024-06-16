@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Real-time Monitoring</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>Real-time Monitoring</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Source</th>
+        <th>Data</th>
+    </tr>
+    </thead>
+    <tbody id="data-table">
+    <!-- 실시간 데이터가 여기 추가됩니다 -->
+    </tbody>
+</table>
+
+<form action="/sendKafkaMessage" method="post">
+    <input type="text" name="message" placeholder="Kafka Message">
+    <button type="submit">Send Kafka Message</button>
+</form>
+
+<form action="/saveRedisMessage" method="post">
+    <input type="text" name="key" placeholder="Redis Key">
+    <input type="text" name="message" placeholder="Redis Message">
+    <button type="submit">Save Redis Message</button>
+</form>
+
+<script>
+    var stompClient = null;
+
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/kafka', function (message) {
+                showMessage('Kafka', message.body);
+            });
+            stompClient.subscribe('/topic/redis', function (message) {
+                showMessage('Redis', message.body);
+            });
+            stompClient.subscribe('/topic/batch', function (message) {
+                showMessage('Batch', message.body);
+            });
+        });
+    }
+
+    function showMessage(source, message) {
+        var table = document.getElementById('data-table');
+        var row = table.insertRow(0);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = source;
+        cell2.innerHTML = message;
+    }
+
+    window.onload = connect;
+</script>
+</body>
+</html>
