@@ -150,3 +150,7 @@
     
 ### 필요하지 않은 Docker 컨테이너 삭제
     docker rm $(docker ps -a -q)
+
+### Kafka 및 Zookeeper 컨테이너 재시작:
+docker restart <kafka-container-id>
+docker restart <zookeeper-container-id>
