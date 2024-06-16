@@ -7,3 +7,6 @@
 ### Docker Compose 서비스 재시작
     docker-compose down
     docker-compose up -d
+
+### Kafka 브로커 로그 확인
+    docker logs <kafka-container-id>
