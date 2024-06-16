@@ -10,3 +10,9 @@
 
 ### Kafka 브로커 로그 확인
     docker logs <kafka-container-id>
+
+### 모든 Docker 컨테이너 중지
+    docker stop $(docker ps -q)
+    
+### 필요하지 않은 Docker 컨테이너 삭제
+    docker rm $(docker ps -a -q)
